@@ -37,6 +37,46 @@ extern "C" {
 /**
  * @file trie.h
  * @brief Trie data type and functions
+ *
+ * Trie is a kind of digital search tree, an efficient indexing method with
+ * O(1) time complexity for searching. Comparably as efficient as hashing,
+ * trie also provides flexibility on incremental matching and key spelling
+ * manipulation. This makes it ideal for lexical analyzers, as well as
+ * spelling dictionaries.
+ *
+ * This library is an implementation of double-array structure for representing
+ * trie, as proposed by Junichi Aoe. The details of the implementation can be
+ * found at http://linux.thai.net/~thep/datrie/datrie.html
+ *
+ * A Trie is associated with an AlphaMap, a map between actual alphabet
+ * characters and the raw character used to walk through trie.
+ * You can define the alphabet set by adding ranges of character codes
+ * to it before associating it to a trie. And the keys to be added to the trie
+ * must be only in such ranges.
+ *
+ * A new Trie can be created in memory using trie_new(), saved to file using
+ * trie_save(), and loaded later with trie_new_from_file().
+ * It can even be embeded in another file using trie_fwrite() and read back
+ * using trie_fread().
+ * After use, Trie objects must be freed using trie_free().
+ *
+ * Operations on trie include:
+ *
+ * - Add/delete entries with trie_store() and trie_delete()
+ * - Retrieve entries with trie_retrieve()
+ * - Walk through trie stepwise with TrieState and its functions
+ *   (trie_root(), trie_state_walk(), trie_state_rewind(),
+ *   trie_state_clone(), trie_state_copy(),
+ *   trie_state_is_walkable(), trie_state_walkable_chars(),
+ *   trie_state_is_single(), trie_state_get_data().
+ *   And do not forget to free TrieState objects with trie_state_free()
+ *   after use.)
+ * - Enumerate all keys using trie_enumerate()
+ * - Iterate entries using TrieIterator and its functions
+ *   (trie_iterator_new(), trie_iterator_next(), trie_iterator_get_key(),
+ *   trie_iterator_get_data().
+ *   And do not forget to free TrieIterator objects with trie_iterator_free()
+ *   after use.)
  */
 
 /**
@@ -61,6 +101,12 @@ typedef Bool (*TrieEnumFunc) (const AlphaChar  *key,
  * @brief Trie walking state
  */
 typedef struct _TrieState TrieState;
+
+
+/**
+ * @brief Trie iteration state
+ */
+typedef struct _TrieIterator TrieIterator;
 
 /*-----------------------*
  *   GENERAL FUNCTIONS   *
@@ -123,6 +169,10 @@ Bool      trie_state_walk (TrieState *s, AlphaChar c);
 
 Bool      trie_state_is_walkable (const TrieState *s, AlphaChar c);
 
+int       trie_state_walkable_chars (const TrieState  *s,
+                                     AlphaChar         chars[],
+                                     int               chars_nelm);
+
 /**
  * @brief Check for terminal state
  *
@@ -144,13 +194,29 @@ Bool      trie_state_is_single (const TrieState *s);
  *
  * @return boolean value indicating whether it is a leaf state
  *
- * Check if the given state is a leaf state. A leaf state is a terminal state 
+ * Check if the given state is a leaf state. A leaf state is a terminal state
  * that has no other branch.
  */
 #define   trie_state_is_leaf(s) \
     (trie_state_is_single(s) && trie_state_is_terminal(s))
 
 TrieData trie_state_get_data (const TrieState *s);
+
+
+/*----------------------*
+ *    ENTRY ITERATION   *
+ *----------------------*/
+
+TrieIterator *  trie_iterator_new (TrieState *s);
+
+void            trie_iterator_free (TrieIterator *iter);
+
+Bool            trie_iterator_next (TrieIterator *iter);
+
+AlphaChar *     trie_iterator_get_key (const TrieIterator *iter);
+
+TrieData        trie_iterator_get_data (const TrieIterator *iter);
+
 
 #ifdef __cplusplus
 }

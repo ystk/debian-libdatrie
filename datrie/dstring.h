@@ -19,38 +19,44 @@
  */
 
 /*
- * alpha-map-private.h - private APIs for alpha-map
- * Created: 2008-12-04
+ * dstring.h - Dynamic string type
+ * Created: 2012-08-01
  * Author:  Theppitak Karoonboonyanan <thep@linux.thai.net>
  */
 
-#ifndef __ALPHA_MAP_PRIVATE_H
-#define __ALPHA_MAP_PRIVATE_H
+#ifndef __DSTRING_H
+#define __DSTRING_H
 
-#include <stdio.h>
-#include "alpha-map.h"
+#include "typedefs.h"
 
-AlphaMap *  alpha_map_fread_bin (FILE *file);
+typedef struct _DString DString;
 
-int         alpha_map_fwrite_bin (const AlphaMap *alpha_map, FILE *file);
+DString * dstring_new (int char_size, int n_elm);
 
-TrieIndex   alpha_map_char_to_trie (const AlphaMap *alpha_map,
-                                    AlphaChar       ac);
+void      dstring_free (DString *ds);
 
-AlphaChar   alpha_map_trie_to_char (const AlphaMap *alpha_map,
-                                    TrieChar        tc);
+int       dstring_length (const DString *ds);
 
-TrieChar *  alpha_map_char_to_trie_str (const AlphaMap  *alpha_map,
-                                        const AlphaChar *str);
+const void * dstring_get_val (const DString *ds);
 
-AlphaChar * alpha_map_trie_to_char_str (const AlphaMap  *alpha_map,
-                                        const TrieChar  *str);
+void *    dstring_get_val_rw (DString *ds);
 
+void      dstring_clear (DString *ds);
 
-#endif /* __ALPHA_MAP_PRIVATE_H */
+Bool      dstring_copy (DString *dst, const DString *src);
 
+Bool      dstring_append (DString *dst, const DString *src);
+
+Bool      dstring_append_string (DString *ds, const void *data, int len);
+
+Bool      dstring_append_char (DString *ds, const void *data);
+
+Bool      dstring_terminate (DString *ds);
+
+Bool      dstring_cut_last (DString *ds);
+
+#endif  /* __DSTRING_H */
 
 /*
 vi:ts=4:ai:expandtab
 */
-

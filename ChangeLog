@@ -1,3 +1,436 @@
+2014-01-10  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	* configure.ac:
+	  - Bump library revision to reflect code changes.
+
+	* NEWS, configure.ac:
+	=== Version 0.2.8 ===
+
+2014-01-09  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Improve documentation.
+
+	* datrie/triedefs.h:
+	  - Refine descriptions of data types.
+	* datrie/trie.c (trie_iterator_new):
+	  - Fix typo on trie_root() mentioning.
+	* datrie/trie.c (trie_store, trie_store_if_absent):
+	  - Adjust wording.
+	* datrie/alpha-map.h, datrie/trie.h:
+	  - Add detailed description of AlphaMap and Trie types.
+
+2014-01-08  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Clarify message in test_nonalpha.
+
+	* tests/test_nonalpha.c (main):
+	  - Clarify message on false key duplication.
+
+2014-01-08  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Add test on keys with non-alphabet input chars.
+
+	* tests/Makefile.am, +tests/test_nonalpha.c:
+	  - Add test to ensure that operations on keys with non-alphabet
+	    input chars fail.
+
+2014-01-08  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Fail trie operations on non-alphabet inputs.
+
+	alpha_map_char_to_trie() tried to return TRIE_CHAR_MAX to indicate
+	out-of-range error. But this value is indeed valid in trie operations.
+	Doing so could allow false key duplication when different non-alphabet
+	chars and TRIE_CHAR_MAX itself were all mapped to TRIE_CHAR_MAX.
+	So, let's fail all trie operations on non-alphabet input chars.
+
+	* datrie/alpha-map-private.h, datrie/alpha-map.c
+	  (alpha_map_char_to_trie):
+	  - Make alpha_map_char_to_trie return TrieIndex type, using
+	    TRIE_INDEX_MAX to indicate out-of-range error.
+	    This allows TRIE_CHAR_MAX to be returned as a valid output.
+	* datrie/alpha-map.c (alpha_map_char_to_trie_str):
+	  - Fail if alpha_map_char_to_trie() returns error code.
+	* datrie/trie.c (trie_retrieve, trie_store_conditionally, trie_delete,
+	  trie_state_walk, trie_state_is_walkable):
+	  - Check return value from alpha_map_char_to_trie() and return
+	    failure status on error.
+	  - Also cast TrieIndex return values to TrieChar on function calls.
+
+	Thanks Naoki Youshinaga for the suggestion.
+
+2014-01-07  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Check for NULL result from AlphaMap string funcs.
+
+	* datrie/trie.c (trie_store_conditionally):
+	  - Return failure on NULL alpha_map_char_to_trie_str().
+
+2014-01-07  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Return NULL on allocation errors in AlphaMap funcs.
+
+	* datrie/alpha-map.c
+	  (alpha_map_char_to_trie_str, alpha_map_trie_to_char_str):
+	  - Return NULL on malloc() error.
+
+2014-01-03  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Fix edge case with TRIE_CHAR_MAX as TrieChar.
+
+	The trie input char with value TRIE_CHAR_MAX (255), was always
+	skipped by double-array algorithms. Let's include it.
+
+	* datrie/darray.c (da_has_children, da_output_symbols,
+	  da_relocate_base, da_first_separate, da_next_separate):
+	  - Include the last char in trie char iterations.
+
+	* datrie/darray.c (da_first_separate, da_next_separate):
+	  - Declare characters as TrieIndex type instead of TrieChar,
+	    to prevent infinite loop due to unsigned char overflow.
+
+	Thanks Naoki Youshinaga for the report, test case, and analysis.
+
+2013-10-25  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Fix comiler warnings in tests.
+
+	* tests/test_walk.c (main):
+	  - Remove unused var i;
+	  - Remove extra printf() args.
+	* tests/test_iterator.c:
+	  - Add missing #include for free().
+	* tests/test_walk.c (walk_dict), tests/utils.c (dict_src):
+	  - Cast string literals to (AlphaChar *) to fix signedness
+	    differences.
+
+2013-10-25  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	* configure.ac: Post-release version suffix added.
+
+2013-10-22  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	* NEWS, configure.ac:
+	=== Version 0.2.7.1 ===
+
+2013-10-21  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	* configure.ac: Bump library versioning to reflect API addition.
+	(Change missing in previous release)
+
+2013-10-21  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	* configure.ac: Post-release version suffix added.
+
+2013-10-21  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	* NEWS, configure.ac:
+	=== Version 0.2.7 ===
+
+2013-10-21  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Add missing distributed file.
+
+	* tests/Makefile.am:
+	  - Add utils.h to distribution.
+
+2013-10-20  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Reorder tests from primitive to applied.
+
+	* tests/Makefile.am:
+	  - Test walk & iterator before store-retrieve & file.
+
+2013-10-20  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Write a test suite for trie walk.
+
+	* tests/test_walk.c:
+	  - Write test code.
+
+2013-10-18  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Write a test suite for trie store/retrieval.
+
+	* tests/utils.h, tests/utils.c (+dict_src_n_entries):
+	  - Add function to get total entries in dict_src[].
+	* tests/test_store-retrieve.c (main):
+	  - Write test code.
+
+2013-10-18  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Fix messages in test_iterator.
+
+	* tests/test_iterator.c (main):
+	  - s/file/trie/. No file is written or read in this test.
+
+2013-10-18  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Skip further iteration tests if key is NULL.
+
+	* tests/test_iterator.c (main):
+	  - Insert 'continue' if trie_iterator_get_key() returns NULL.
+
+2013-10-17  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Document availibility of alpha_char_strcmp()
+
+	* datrie/alpha-map.c (alpha_char_strcmp):
+	  - Document that it's available since 0.2.7.
+
+2013-10-17  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Write a test for trie iterator.
+
+	* tests/test_iterator.c:
+	  - Write test suite for trie iterator.
+
+2013-10-17  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Add skeleton test suites & a test for file I/O.
+
+	* configure.ac, Makefile.am, +tests/, +tests/Makefile.am:
+	  - Add tests/ dir to the build system.
+	* +tests/utils.h, +tests/utils.c:
+	* +tests/test_file.c:
+	* +tests/test_iterator.c:
+	* +tests/test_store-retrieve.c:
+	* +tests/test_walk.c:
+	  - Add skeleton for test suites.
+	* tests/utils.h, tests/utils.c, tests/test_file.c:
+	  - Write test suite for file I/O.
+
+2013-10-17  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Add alpha_char_strcmp() API.
+
+	* datrie/alpha-map.h, datrie/alpha-map.c (+alpha_char_strcmp):
+	  - Add alpha_char_strcmp() declaration & body.
+	* datrie/libdatrie.def, datrie/libdatrie.map:
+	  - Add alpha_char_strcmp symbols.
+
+2013-10-16  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Add missing info in alpha_map_add_range() doc.
+
+	* datrie/alpha-map.c (alpha_map_add_range):
+	  - Add documentation on return value.
+
+2013-09-23  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Fix build for Visual Studio on Windows.
+
+	* datrie/dstring.c (dstring_append, dstring_append_string,
+	  dstring_append_char, dstring_terminate):
+	  - Cast (void *) pointers to (char *) before calculating offsets,
+	    for portability.
+
+	Thanks Gabi Davar for the report and fix (via Mikhail Korobov
+	<kmike84@gmail.com>).
+
+2013-09-23  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Check for doxygen required version.
+
+	* configure.ac:
+	  - When doxygen-doc is enabled, also check doxygen version.
+
+2013-09-23  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Fix doxygen warning.
+
+	* doc/Doxyfile.in:
+	  - doxygen no longer ships with the FreeSans font. Just drop it.
+
+2013-09-23  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Update Doxyfile.
+
+	* doc/Doxyfile.in:
+	  - Updated with 'doxygen -u'.
+
+2013-09-23  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Fix compiler warnings.
+	* datrie/trie-string.c (trie_string_append_string):
+	* datrie/trie.c (trie_iterator_get_key):
+	  - Cast strlen() args from (const TrieChar *) to (const char *),
+	    to fix signedness mismatch warnings.
+
+2013-09-23  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Fix automake warnings.
+
+	* datrie/Makefile.am, tools/Makefile.am:
+	  - Replace deprecated INCLUDES with AM_CPPFLAGS.
+
+2013-09-23  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	* configure.ac: Post-release version suffix added.
+
+2013-01-23  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	* NEWS, configure.ac:
+	=== Version 0.2.6 ===
+
+2013-01-22  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Use xz compression for release tarball.
+
+	* configure.ac:
+	  - Specify "dist-xz no-dist-gzip" options to AM_INIT_AUTOMAKE.
+
+2012-08-06  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Improve AlphaMap range merging.
+
+	* datrie/alpha-map.c (alpha_map_add_range):
+	  - Also try to merge adjacent ranges. Otherwise, adding one by one
+	    character will result in linear search on alphabet set.
+
+	Thanks Mikhail Korobov <kmike84@gmail.com> for the report.
+
+2012-08-05  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Migrate trie_enumerate() to the new TrieIterator.
+
+	This improves performance by 10%, and recursion stacks are also
+	eliminated.
+
+	* datrie/trie.c (trie_enumerate):
+	  - Replace da_enumerate() call with TrieIterator loop.
+	* datrie/trie.c (-trie_da_enum_func, -_TrieEnumData):
+	* datrie/darray.h, datrie/darray.c
+	  (-da_enumerate, -da_get_transition_key, -DAEnumFunc,
+	   -da_enumerate_recursive):
+	  - Drop now-unused codes.
+
+2012-08-05  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Optimize key calculation for TrieIterator.
+
+	* datrie/Makefile.am +datrie/dstring.h +datrie/dstring-private.h
+	  +datrie/dstring.c +datrie/trie-string.h +datrie/trie-string.c:
+	  - Add dynamic string classes DString and TrieString.
+	* datrie/trie.c:
+	  - (TrieIterator): Add "key" dynamic trie string member for
+	    incrementally gathering the key while iterating.
+	  - Initialize "key" member to NULL on construction. Only allocate and
+	    free it on branching root states.
+	* datrie/darray.h, datrie/darray.c
+	  (da_first_separate, da_next_separate):
+	  - Instead of allocating memory for return string, accept a dynamic
+	    string object and update it while traversing.
+	* datrie/trie.c (trie_iterator_next):
+	  - For branching state, create the "key" dynamic string object on
+	    first iteration and pass it to da_first_separate() and
+	    da_next_separate() along the iterations.
+	* datrie/trie.c (trie_iterator_get_key):
+	  - Replace the total key reconstruction by da_get_transition_key()
+	    with simple string catenation of the dynamic "key" and the suffix
+	    string.
+	* datrie/darray.h, datrie/darray.c (da_get_transition_key):
+	  - Adjust to use dynamic string instead of total allocation.
+	* datrie/darray.c (da_enumerate_recursive):
+	  - Adjust the da_get_transition_key() call accordingly.
+
+	Thanks Mikhail Korobov <kmike84@gmail.com> for the suggested approach
+	and for profiling check.
+
+2012-07-31  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Add TrieIterator and its operations.
+
+	* datrie/trie.h, datrie/trie.c
+	  (+trie_iterator_new, +trie_iterator_free, +trie_iterator_next,
+	   +trie_iterator_get_key, +trie_iterator_get_data):
+	  - Add TrieIterator class and its methods.
+	* datrie/libdatrie.def, datrie/libdatrie.map:
+	  - Add the new export symbols.
+	* datrie/darray.h, datrie/darray.c
+	  (da_get_state_key -> da_get_transition_key):
+	  - Adjust da_get_state_key() from getting transition key from root
+	    to getting from arbitrary ancestor.
+	* datrie/darray.h, datrie/darray.c
+	  (+da_first_separate, +da_next_separate):
+	  - Add internal functions for iterating from one separate node to
+	    another in double-array structure.
+
+	Thanks Mikhail Korobov <kmike84@gmail.com> for the use case suggestion.
+
+2012-07-30  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	* doc/Doxyfile.in: Upgrade to doxygen 1.8.1.2 format.
+
+2012-07-29  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	* datrie/trie.c: Reformat source.
+
+2012-07-29  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	* datrie/trie.h, datrie/trie.c (trie_state_walkable_chars):
+	Reformat source.
+
+2012-07-27  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	Add new API trie_state_walkable_chars() to allow breadth-first
+	traversal.
+
+	* datrie/darray.h, datrie/darray.c:
+	  - Move da_output_symbols() to darray.h, to be called by the new
+	    function.
+	  - Move the Symbols class to darray.h, as required by
+	    da_output_symbols().
+	* datrie/trie.h, datrie/trie.c (+trie_state_walkable_chars):
+	  - Add the new public function.
+	* datrie/libdatrie.map, datrie/libdatrie.def:
+	  - Add the new symbol to export maps.
+	* configure.ac:
+	  - Update library versioning to reflect API addition.
+
+2012-07-26  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	* darray/darray.c (da_has_children): Accept (const DArray *) arg.
+
+2012-07-26  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	* datrie/darray.c (da_has_children, da_output_symbols,
+	  da_relocate_base):
+	Calculate max_c candidate using num_cells - base instead of
+	TRIE_INDEX_MAX - base, to prevent more unnecessary loops.
+
+2012-07-26  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	* datrie/trie.c (trie_state_get_data):
+	Check if the state is leaf, not just suffix, before getting data.
+
+	Thanks Mikhail Korobov <kmike84@gmail.com> for the report.
+
+2012-07-25  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	* datrie/tail.h, datrie/tail.c:
+	* datrie/alpha-map.c:
+	* datrie/trie.h, datrie/trie.c:
+	* datrie/darray.c: Remove trailing spaces.
+
+2012-07-13  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	* datrie/tail.c (tail_get_suffix): Fix function documentation.
+
+	Thanks Mikhail Korobov <kmike84@gmail.com> for the report.
+
+2012-07-13  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	* datrie/darray.c, datrie/tail.c:
+	  - Don't include <stdint.h> when compiled with MSVC, as the header is
+	    missing there, and SIZE_MAX is provided in some other header.
+
+	Thanks Mikhail Korobov <kmike84@gmail.com> for the report.
+
+2012-07-13  Theppitak Karoonboonyanan  <thep@linux.thai.net>
+
+	* configure.ac: Post-release version suffix added.
+
 2011-11-04  Theppitak Karoonboonyanan  <thep@linux.thai.net>
 
 	* NEWS, configure.ac:

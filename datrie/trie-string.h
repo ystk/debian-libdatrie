@@ -19,36 +19,45 @@
  */
 
 /*
- * alpha-map-private.h - private APIs for alpha-map
- * Created: 2008-12-04
+ * trie-string.h - Dynamic string type for Trie alphabets
+ * Created: 2012-08-02
  * Author:  Theppitak Karoonboonyanan <thep@linux.thai.net>
  */
 
-#ifndef __ALPHA_MAP_PRIVATE_H
-#define __ALPHA_MAP_PRIVATE_H
+#ifndef __TRIE_STRING_H
+#define __TRIE_STRING_H
 
-#include <stdio.h>
-#include "alpha-map.h"
+#include "dstring.h"
+#include "triedefs.h"
 
-AlphaMap *  alpha_map_fread_bin (FILE *file);
+typedef struct _TrieString TrieString;
 
-int         alpha_map_fwrite_bin (const AlphaMap *alpha_map, FILE *file);
+TrieString * trie_string_new (int n_elm);
 
-TrieIndex   alpha_map_char_to_trie (const AlphaMap *alpha_map,
-                                    AlphaChar       ac);
+void      trie_string_free (TrieString *ts);
 
-AlphaChar   alpha_map_trie_to_char (const AlphaMap *alpha_map,
-                                    TrieChar        tc);
+int       trie_string_length (const TrieString *ts);
 
-TrieChar *  alpha_map_char_to_trie_str (const AlphaMap  *alpha_map,
-                                        const AlphaChar *str);
+const void * trie_string_get_val (const TrieString *ts);
 
-AlphaChar * alpha_map_trie_to_char_str (const AlphaMap  *alpha_map,
-                                        const TrieChar  *str);
+void *    trie_string_get_val_rw (TrieString *ts);
+
+void      trie_string_clear (TrieString *ts);
+
+Bool      trie_string_copy (TrieString *dst, const TrieString *src);
+
+Bool      trie_string_append (TrieString *dst, const TrieString *src);
+
+Bool      trie_string_append_string (TrieString *ts, const TrieChar *str);
+
+Bool      trie_string_append_char (TrieString *ts, TrieChar tc);
+
+Bool      trie_string_terminate (TrieString *ts);
+
+Bool      trie_string_cut_last (TrieString *ts);
 
 
-#endif /* __ALPHA_MAP_PRIVATE_H */
-
+#endif  /* __TRIE_STRING_H */
 
 /*
 vi:ts=4:ai:expandtab

@@ -8,7 +8,7 @@ pkginclude_HEADERS =	\
 
 EXTRA_DIST = libdatrie.map libdatrie.def
 
-INCLUDES = -I$(top_srcdir)
+AM_CPPFLAGS = -I$(top_srcdir)
 
 lib_LTLIBRARIES = libdatrie.la
 
@@ -16,6 +16,11 @@ libdatrie_la_SOURCES =	\
 	typedefs.h	\
 	triedefs.h	\
 	trie-private.h	\
+	dstring.h	\
+	dstring-private.h	\
+	dstring.c	\
+	trie-string.h	\
+	trie-string.c	\
 	fileutils.h	\
 	fileutils.c	\
 	darray.h	\

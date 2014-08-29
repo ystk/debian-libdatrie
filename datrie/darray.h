@@ -28,6 +28,7 @@
 #define __DARRAY_H
 
 #include "triedefs.h"
+#include "trie-string.h"
 
 /**
  * @file darray.h
@@ -35,22 +36,20 @@
  */
 
 /**
+ * @brief Symbol set structure type
+ */
+typedef struct _Symbols Symbols;
+
+Symbols *    symbols_new ();
+void         symbols_free (Symbols *syms);
+void         symbols_add (Symbols *syms, TrieChar c);
+int          symbols_num (const Symbols *syms);
+TrieChar     symbols_get (const Symbols *syms, int index);
+
+/**
  * @brief Double-array structure type
  */
 typedef struct _DArray  DArray;
-
-/**
- * @brief Double-array entry enumeration function
- *
- * @param key       : the key of the entry, up to @a sep_node
- * @param sep_node  : the separate node of the entry
- * @param user_data : user-supplied data
- *
- * @return TRUE to continue enumeration, FALSE to stop
- */
-typedef Bool (*DAEnumFunc) (const TrieChar   *key,
-                            TrieIndex         sep_node,
-                            void             *user_data);
 
 
 DArray * da_new ();
@@ -76,6 +75,8 @@ void       da_set_check (DArray *d, TrieIndex s, TrieIndex val);
 
 Bool       da_walk (const DArray *d, TrieIndex *s, TrieChar c);
 
+Symbols *  da_output_symbols  (const DArray *d, TrieIndex s);
+
 /**
  * @brief Test walkability in double-array structure
  *
@@ -99,7 +100,12 @@ void       da_prune (DArray *d, TrieIndex s);
 
 void       da_prune_upto (DArray *d, TrieIndex p, TrieIndex s);
 
-Bool    da_enumerate (const DArray *d, DAEnumFunc enum_func, void *user_data);
+TrieIndex  da_first_separate (DArray *d, TrieIndex root, TrieString *keybuff);
+
+TrieIndex  da_next_separate (DArray     *d,
+                             TrieIndex   root,
+                             TrieIndex   sep,
+                             TrieString *keybuff);
 
 #endif  /* __DARRAY_H */
 

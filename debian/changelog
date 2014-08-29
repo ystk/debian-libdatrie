@@ -1,3 +1,43 @@
+libdatrie (0.2.8-1) unstable; urgency=medium
+
+  * Imported Upstream version 0.2.8
+  * Run test suites after build
+  * Declare libdatrie-dev M-A: same
+  * Update copyright years
+  * Bump Standards-Version to 3.9.5 (no changes)
+
+ -- Theppitak Karoonboonyanan <thep@debian.org>  Fri, 10 Jan 2014 13:36:33 +0700
+
+libdatrie (0.2.7.1-1) unstable; urgency=low
+
+  * Use canonical anonscm URIs in Vcs-* fields.
+  * Imported Upstream version 0.2.7
+  * Bump doxygen b-dep, as per upstream
+  * d/libdatrie1.symbols: Updated according to upstream API change
+  * Imported Upstream version 0.2.7.1
+
+ -- Theppitak Karoonboonyanan <thep@debian.org>  Tue, 22 Oct 2013 08:34:26 +0700
+
+libdatrie (0.2.6-2) unstable; urgency=low
+
+  * debian/watch: Watch upstream .tar.xz instead of .tar.gz.
+  * Upload to unstable.
+
+ -- Theppitak Karoonboonyanan <thep@debian.org>  Thu, 09 May 2013 09:41:45 +0700
+
+libdatrie (0.2.6-1) experimental; urgency=low
+
+  * Bump Standards-Version to 3.9.3 with changes
+    - Update debian/copyright Format: URL to 'packaging-manuals' one.
+  * Update copyright years
+  * Imported Upstream version 0.2.6
+  * debian/libdatrie1.symbols: Updated as per upstream
+  * debian/copyright: Update copyright years
+  * Bump Standards-Version to 3.9.4 (no changes needed)
+  * Build with xz compression
+
+ -- Theppitak Karoonboonyanan <thep@debian.org>  Wed, 23 Jan 2013 17:46:32 +0700
+
 libdatrie (0.2.5-3) unstable; urgency=low
 
   * Set Vcs-Git and Vcs-Browser to alioth
